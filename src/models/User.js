@@ -26,4 +26,57 @@ class User {
     // Mengembalikan data pengguna (baik dari localStorage atau array kosong jika tidak ada)
     return this._users;
   }
+
+  saveUser(userData) {
+    // Proses Validasi Data
+    const { name, username, avatar, password } = userData; // Destructuring object userData
+
+    // Validasi data pengguna
+    if (!name || !username || !avatar || !password) {
+      return {
+        success: false,
+        error: "Semua data pengguna harus diisi!",
+      };
+    }
+
+    // Validasi panjang username
+    if (username.length < 4) {
+      return {
+        success: false,
+        error: "Username harus memiliki minimal 4 karakter.",
+      };
+    }
+
+    // Validasi format email (jika username berupa email)
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(username)) {
+      return {
+        success: false,
+        error: "Format email tidak valid.",
+      };
+    }
+
+    // Validasi panjang password
+    if (password.length < 8) {
+      return {
+        success: false,
+        error: "Password harus memiliki minimal 8 karakter.",
+      };
+    }
+
+    // Validasi kompleksitas password (opsional: huruf besar, kecil, angka, dan simbol)
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordPattern.test(password)) {
+      return {
+        success: false,
+        error: "Password harus mengandung minimal satu huruf besar, satu huruf kecil, satu angka, dan satu simbol.",
+      };
+    }
+
+    // // Jika semua validasi lolos, proses penyimpanan data
+    // return {
+    //   success: true,
+    //   message: "Data pengguna berhasil disimpan!",
+    // };
+  }
 }
