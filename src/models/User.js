@@ -78,5 +78,15 @@ class User {
     //   success: true,
     //   message: "Data pengguna berhasil disimpan!",
     // };
+
+    const newUser = { // Membuat objek baru untuk data pengguna
+      id: Date.now(), // Menggunakan timestamp saat ini sebagai ID
+      isActive: true, // Status akun aktif
+      ...userData // Menggabungkan data pengguna yang diterima dari parameter
+    }
+
+    // Mengambil data pengguna yang sudah ada
+    const users = this.getUsers(); // Mengambil data pengguna dari local storage
+    users.push(newUser); // Menambahkan data pengguna baru ke array users
   }
 }
