@@ -47,15 +47,6 @@ class User {
       };
     }
 
-    // Validasi format email (jika username berupa email)
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(username)) {
-      return {
-        success: false,
-        error: "Format email tidak valid.",
-      };
-    }
-
     // Validasi panjang password
     if (password.length < 8) {
       return {
@@ -88,5 +79,70 @@ class User {
     // Mengambil data pengguna yang sudah ada
     const users = this.getUsers(); // Mengambil data pengguna dari local storage
     users.push(newUser); // Menambahkan data pengguna baru ke array users
+
+    try {
+      localStorage.setItem("users", JSON.stringify(users)); // Menyimpan data pengguna ke local storage
+      return {
+        success: true,
+        message: "Data pengguna berhasil disimpan!",
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: "Data pengguna gagal disimpan!",
+      }
+    }
+  }
+
+  userSignin(userData) {
+    // Proses Validasi Data
+    const { username, password } = userData; // Destructuring object userData
+
+    // Validasi data pengguna
+    if (!username || !password) {
+      return {
+        success: false,
+        error: "Username dan password harus diisi!",
+      };
+    }
+
+    // Validasi panjang username
+    if (username.length < 4) {
+      return {
+        success: false,
+        error: "Username harus memiliki minimal 4 karakter.",
+      };
+    }
+
+    // Validasi panjang password
+    if (password.length < 8) {
+      return {
+        success: false,
+        error: "Password harus memiliki minimal 8 karakter.",
+      };
+    }
+
+    // Validasi kompleksitas password (opsional: huruf besar, kecil, angka, dan simbol)
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordPattern.test(password)) {
+      return {
+        success: false,
+        error: "Password harus mengandung minimal satu huruf besar, satu huruf kecil, satu angka, dan satu simbol.",
+      };
+    }
+
+    const userExist = this.getUsers().some((user) => user.username === username && user.password === password); // Mengecek apakah user sudah terdaftar atau belum
+
+    if (userExist) {
+      return {
+        success: true,
+        message: "Login berhasil!",
+      }
+    } else {
+      return {
+        success: false,
+        error: "Username atau password salah!",
+      }
+    }
   }
 }
