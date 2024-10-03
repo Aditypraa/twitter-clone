@@ -9,6 +9,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Mendapatkan elemen feedback untuk menampilkan pesan error atau sukses
     const instantFeedback = document.getElementById("instantFeedback");
 
+    instantFeedback.style.display = "none"; // Menyembunyikan feedback
+
     // Membuat instance dari class User untuk mengelola data pengguna
     const userManager = new User(); // UserManager adalah instance Object dari class User
 
