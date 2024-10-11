@@ -27,7 +27,7 @@ class User {
     return this._users;
   }
 
-  saveUser(userData) {
+  registerUser(userData) {
     // Proses Validasi Data
     const { name, username, avatar, password } = userData; // Destructuring object userData
 

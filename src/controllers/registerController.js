@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // Memanggil method saveUser dari userManager untuk menyimpan data pengguna
-    const result = userManager.saveUser(userData); // Menyimpan data user ke dalam local storage
+    const result = userManager.registerUser(userData); // Menyimpan data user ke dalam local storage
 
     // Mengecek apakah penyimpanan berhasil atau gagal
     if (result.success) {
