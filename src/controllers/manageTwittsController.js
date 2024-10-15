@@ -140,20 +140,24 @@ document.addEventListener("DOMContentLoaded", () => {
                   />
                   <p id='totalLikeThatTwitt' class="text-sm font-normal text-like">${countLoveTwitts} Likes</p>
                 </a>
-                <a
+                ${twitt.twittUsernameOwner === usernameLoggedIn ?
+                        `<a
+                        id="deleteTwitt-${twitt.id}"
                   href="#"
                   class="cursor flex justify-start items-center w-[93px] gap-1.5"
                 >
                   <img src="assets/icons/trash.svg" alt="heart" />
                   <p class="text-sm font-normal text-username">Delete</p>
-                </a>
-                <a
+                </a>`
+                        :
+                        `<a
                   href="#"
                   class="flex justify-start items-center w-[93px] gap-1.5"
                 >
                   <img src="assets/icons/warning-2.svg" />
                   <p class="text-sm font-normal text-username">Report</p>
-                </a>
+                </a>`
+                    }
               </div>
             </div>
           </div>
@@ -184,6 +188,21 @@ document.addEventListener("DOMContentLoaded", () => {
                         instantFeedback.innerText = result.error; // menampilkan pesan error
                     }
                 })
+
+                const deleteTwittButton = itemTwitt.querySelector(`#deleteTwitt-${twitt.id}`); // mengambil deleteTwittButton
+
+                if (deleteTwittButton) {
+                    deleteTwittButton.addEventListener("click", (event) => { // menambahkan event click pada deleteTwittButton
+                        event.preventDefault(); // mencegah submit default dari form, agar tidak refresh halaman
+                        const result = twittManager.deleteTwitt(twitt.id); // menghapus twitt berdasarkan id   
+                        if (result.success) {
+                            displayAllTwiits(twittManager.getTwitts()); // menampilkan semua twitts
+                        } else {
+                            instantFeedback.style.display = "flex"; // menampilkan instantFeedback
+                            instantFeedback.innerText = result.error; // menampilkan pesan error
+                        }
+                    })
+                }
 
             })
         }

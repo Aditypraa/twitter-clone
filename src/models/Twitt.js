@@ -133,4 +133,25 @@ class Twitt {
             };
         }
     }
+
+    // Method delete Twitt
+    deleteTwitt(twittId) {
+        const index = this.getTwitts().findIndex((twitt) => twitt.id === twittId); // Mencari index twitt berdasarkan id
+        if (index !== -1) { // Jika index ditemukan
+            this._twitts.splice(index, 1); // Menghapus data twitt berdasarkan index
+            try {
+                localStorage.setItem("twitts", JSON.stringify(this._twitts)); // Menyimpan data twitts ke localStorage dengan key 'twitts'
+                return {
+                    success: true, // Jika berhasil, kembalikan nilai success true
+                    error: null, // Tidak ada error
+                };
+            } catch (error) {
+                return {
+                    success: false, // Jika gagal, kembalikan nilai success false
+                    error: "Twitt Tidak Ditemukan"
+                };
+            }
+        }
+
+    }
 }
