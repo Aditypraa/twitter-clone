@@ -1,6 +1,7 @@
 class Twitt {
     constructor() {
         this._twitts = null;
+        this._loveTwitts = null;
     }
 
     // Method untuk mendapatkan data pengguna dari localStorage
@@ -22,6 +23,67 @@ class Twitt {
 
         // Mengembalikan data pengguna (baik dari localStorage atau array kosong jika tidak ada)
         return this._twitts;
+    }
+
+    userHashLikedTwittValidate(twittId, userId) {
+        // Proses Pemeriksaan apakah user tersebut telah memberikan like pada twitt tersebut
+        const loveTwitts = this.getLoveTwitts(); // Mengambil data loveTwitts dari localStorage
+
+        return loveTwitts.some((loveTwitt) => loveTwitt.twittId === twittId && loveTwitt.userId === userId); // Mengecek apakah user tersebut telah memberikan like pada twitt tersebut
+    }
+
+    getLoveTwitts() {
+        // Jika _loveTwitts belum diinisialisasi (masih null)
+        if (this._loveTwitts === null) {
+            try {
+                // Mengambil data pengguna yang tersimpan di localStorage dengan key "lovetwitts"
+                const storedLoveTwitts = localStorage.getItem("lovetwitts"); // Mengambil data dari local storage yang DEFAULT formatnya adalah String JSON
+
+                // Jika ada data yang ditemukan di localStorage, data JSON tersebut di-parse menjadi array object
+                // Jika tidak ada data (storedLoveTwitts null), _loveTwitts diisi dengan array kosong
+                this._loveTwitts = storedLoveTwitts ? JSON.parse(storedLoveTwitts) : []; // Mengubah string JSON menjadi objek array, atau mengisi dengan array kosong jika null
+            } catch (error) {
+                // Jika terjadi kesalahan saat mengambil atau mem-parse data dari localStorage
+                return (this._loveTwitts = []); // Jika terjadi error, kembalikan nilai _loveTwitts sebagai array kosong
+            }
+        }
+
+        // Mengembalikan data pengguna (baik dari localStorage atau array kosong jika tidak ada)
+        return this._loveTwitts;
+    }
+
+    // method untuk love twitt
+    loveTwitt(loveTwittData) {
+        const { twittId, userId } = loveTwittData // Destructuring object loveTwittData
+
+        // Membuat Valdasi apakah user tersebut telah memeberikan like pada twitt tersebut
+        if (this.userHashLikedTwittValidate(twittId, userId)) {
+            return {
+                success: false,
+                error: "Kamu tidak bisa memberikan love lebih dari satu kali",
+            }
+        }
+
+        const newLoveTwitt = { // Membuat objek newLoveTwitt
+            id: Date.now(), // Menggunakan timestamp sebagai id
+            ...loveTwittData // Menggabungkan data loveTwittData dengan id    
+        }
+
+        const loveTwitts = this.getLoveTwitts(); // Mengambil data loveTwitts dari localStorage
+        loveTwitts.push(newLoveTwitt); // Menambahkan data loveTwittData ke array loveTwitts
+
+        try {
+            localStorage.setItem("lovetwitts", JSON.stringify(loveTwitts)); // Menyimpan data loveTwitts ke localStorage dengan key 'loveTwitts'
+            return {
+                success: true, // Jika berhasil, kembalikan nilai success true
+                error: null, // Tidak ada error
+            };
+        } catch (error) {
+            return {
+                success: false, // Jika gagal, kembalikan nilai success false
+                error: error.message, // Tampilkan pesan error
+            };
+        }
     }
 
     // Method untuk menambahkan data pengguna ke localStorage

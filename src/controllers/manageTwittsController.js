@@ -64,6 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     const existingTwitts = twittManager.getTwitts(); // mengambil data twitts dari local storage
+    const existingLoveTwitts = twittManager.getLoveTwitts(); // mengambil data loveTwitts dari local storage
 
     function displayAllTwiits(twitts = existingTwitts) { // membuat fungsi displayAllTwiits dengan parameter twitts
         if (twitts.length === 0) { // jika existingTwitts kosong
@@ -79,6 +80,11 @@ document.addEventListener("DOMContentLoaded", () => {
             twitts.forEach((twitt) => { // melakukan perulangan pada setiap twitt
 
                 const ownerTwitt = twittUsers.find(user => user.username.toLowerCase() === twitt.twittUsernameOwner.toLowerCase()); // mencari data user yang memiliki twitt
+
+                const getLoveTwitts = existingLoveTwitts.filter(loveTwitt => loveTwitt.twittId === twitt.id); // mencari data loveTwitts yang memiliki twitt
+                const countLoveTwitts = getLoveTwitts.length; // menghitung jumlah loveTwitts
+
+                const hasLiked = twittManager.userHashLikedTwittValidate(twitt.id, usernameLoggedIn); // mengecek apakah user telah memberikan like pada twitt tersebut
 
                 const itemTwitt = document.createElement("div"); // membuat elemen div
                 itemTwitt.className = "bg-primary p-4 border-b-2 border-line" // menambahkan class pada itemTwitt
@@ -123,15 +129,16 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="flex justify-between items-center pl-[55px] w-[484px]">
               <div class="flex justify-center items-center gap-2.5 pr-[250px]">
                 <a
+                id="loveTwitt-${twitt.id}"
                   href="#"
                   class="cursor flex justify-start items-center w-[93px] gap-1.5"
                 >
                   <img
                     class="like-icon"
-                    src="assets/icons/heart.svg"
+                    src="assets/icons/${hasLiked ? 'heart-fill.svg' : 'heart.svg'}"
                     alt="heart"
                   />
-                  <p class="text-sm font-normal text-like">0 Likes</p>
+                  <p id='totalLikeThatTwitt' class="text-sm font-normal text-like">${countLoveTwitts} Likes</p>
                 </a>
                 <a
                   href="#"
@@ -153,6 +160,31 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
 
                 twittsWrapper.appendChild(itemTwitt); // menambahkan itemTwitt ke twittsWrapper
+
+                const totalLikeThatTwitt = itemTwitt.querySelector("#totalLikeThatTwitt"); // mengambil totalLikeThatTwitt
+                const likeIcon = itemTwitt.querySelector(".like-icon"); // mengambil class likeIcon
+
+                // Bikin event listener untuk fitur like
+                itemTwitt.querySelector(`#loveTwitt-${twitt.id}`).addEventListener("click", (event) => {
+                    event.preventDefault(); // mencegah submit default dari form, agar tidak refresh halaman
+
+                    const loveTwittData = { // membuat objek loveTwittData
+                        twittId: twitt.id, // mengambil id twitt
+                        userId: usernameLoggedIn // mengambil username yang login
+                    }
+
+                    const result = twittManager.loveTwitt(loveTwittData); // menambahkan loveTwittData ke local storage
+
+                    if (result.success) { // jika berhasil
+                        let currentLikes = parseInt(totalLikeThatTwitt.textContent) || 0; // mengambil jumlah like
+                        totalLikeThatTwitt.textContent = currentLikes + 1 + " Likes" // menambahkan jumlah like
+                        likeIcon.src = "assets/icons/heart-fill.svg"; // mengganti icon like
+                    } else {
+                        instantFeedback.style.display = "flex"; // menampilkan instantFeedback
+                        instantFeedback.innerText = result.error; // menampilkan pesan error
+                    }
+                })
+
             })
         }
     }
