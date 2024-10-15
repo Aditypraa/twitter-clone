@@ -79,8 +79,11 @@
             >Following</a
           >
         </div>
-
         <div class="bg-primary pt-[20px] pb-[16px] px-4 border-b-2 border-line">
+          <div
+          id="instantFeedback"
+          class="mt-3 instant-feedback flex flex-row p-3 rounded-xl text-base bg-red-500 text-white font-bold"
+        ></div>
           <form id="twittForm">
             <div class="flex items-start justify-start">
               <img
@@ -389,10 +392,9 @@
       </div>
     </section>
 
-    <script src="./models/User.js"></script> // Import User model
-    <script src="./models/Twitt.js"></script> // Import Twitt model
-    <script src="./controllers/twittController.js"></script> // Import Twitt controller
-    <script src="./controllers/manageTwittsController.js"></script> // Import Manage Twitts controller
+    <script src="./models/User.js"></script> 
+    <script src="./models/Twitt.js"></script> 
+    <script src="./controllers/manageTwittsController.js"></script>
 
     <script>
       tailwind.config = {
